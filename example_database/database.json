@@ -1,0 +1,76 @@
+{
+    "concept_dict": {
+        "<bo>": {
+            "name": "bo",
+            "image": "example_database/bo.png",
+            "info": "<bo> is a well-groomed, medium-sized Shiba Inu with a thick, cinnamon-colored coat, cream accents, alert eyes, and a black collar.",
+            "category": "dog"
+        },
+        "<brown-duck>": {
+            "name": "brown-duck",
+            "image": "example_database/brown-duck.png",
+            "info": "<brown-duck> is a brown, plush duck toy with a green head, an yellow beak and feet, and a white stripe around its neck.",
+            "category": "plush toy"
+        },
+        "<butin>": {
+            "name": "butin",
+            "image": "example_database/butin.png",
+            "info": "<butin> is a husky, lying on its back with its paws in the air and its eyes closed. The husky has a white and brown coat.",
+            "category": "dog"
+        },
+        "<cat-cup>": {
+            "name": "cat-cup",
+            "image": "example_database/cat-cup.png",
+            "info": "<cat-cup> is a white ceramic mug with a cat face design. The mug has a handle on the side.",
+            "category": "cup"
+        },
+        "<chua-thien-mu>": {
+            "name": "chua-thien-mu",
+            "image": "example_database/chua-thien-mu.png",
+            "info": "<chua-thien-mu> is a tall, octagonal pagoda with a pointed roof. The pagoda is made of gray and red stone and has a series of windows and decorative elements.",
+            "category": "building"
+        },
+        "<ciin>": {
+            "name": "ciin",
+            "image": "example_database/ciin.png",
+            "info": "<ciin> is a young woman with long blonde hair, wearing a white sleeveless shirt. She has bright red lipstick and light makeup.",
+            "category": "person"
+        },
+        "<denisdang>": {
+            "name": "denisdang",
+            "image": "example_database/denisdang.png",
+            "info": "<denisdang> is a man with white hair and a pink and grey sweater.",
+            "category": "person"
+        },
+        "<dragon>": {
+            "name": "dragon",
+            "image": "example_database/dragon.png",
+            "info": "<dragon> is a pink and yellow plush toy in the shape of a dragon. It has a blue wing and yellow spots on its body.",
+            "category": "plush toy"
+        },
+        "<duck-banana>": {
+            "name": "duck-banana",
+            "image": "example_database/duck-banana.png",
+            "info": "<duck-banana> is a large, white, plush toy shaped like a duck with an orange beak, feet, and a yellow chest.",
+            "category": "plush toy"
+        },
+        "<dug>": {
+            "name": "dug",
+            "image": "example_database/dug.png",
+            "info": "<dug> is a golden retriever from the movie Up. He has a brown coat and a big, goofy smile, wearing a collar with some round objects.",
+            "category": "cartoon character"
+        }
+    },
+    "path_to_concept": {
+        "example_database/bo.png": "<bo>",
+        "example_database/brown-duck.png": "<brown-duck>",
+        "example_database/butin.png": "<butin>",
+        "example_database/cat-cup.png": "<cat-cup>",
+        "example_database/chua-thien-mu.png": "<chua-thien-mu>",
+        "example_database/ciin.png": "<ciin>",
+        "example_database/denisdang.png": "<denisdang>",
+        "example_database/dragon.png": "<dragon>",
+        "example_database/duck-banana.png": "<duck-banana>",
+        "example_database/dug.png": "<dug>"
+    }
+}
