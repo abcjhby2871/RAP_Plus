@@ -6,3 +6,4 @@ runs/
 *.jpg 
 *.png
 **__pycache__**
+!images
