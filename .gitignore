@@ -6,4 +6,5 @@ runs/
 *.jpg 
 *.png
 **__pycache__**
-!images
+!images/framework.png 
+!images/teaser.png
