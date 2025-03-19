@@ -4,6 +4,7 @@
 runs/
 *.jpg 
 *.png
+*.egg-info
 **__pycache__**
 !images/framework.png 
 !images/teaser.png

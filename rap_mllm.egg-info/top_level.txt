@@ -1,4 +1,0 @@
-eval
-example_database
-images
-llava
