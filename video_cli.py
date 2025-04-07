@@ -32,9 +32,6 @@ def main(args):
 
     model_name = get_model_name_from_path(args.model_path)
     tokenizer, model, image_processor, context_len = load_pretrained_model(args.model_path, args.model_base, model_name, args.load_8bit, args.load_4bit, device=args.device)
-    print(1)
-    print(image_processor)
-    print(1)
 
     if "phi" in model_name.lower():
         conv_mode = "phi3_instruct"
@@ -98,8 +95,8 @@ def main(args):
                 for image in task_images:
 
                     if args.retrieval:
-                        crops = detector.detect_and_crop(image)
-                        extra_info, rag_images = retriever.retrieve(database, inp, queries = crops, topK = args.topK)
+                        crops, detected_regions = detector.detect_and_crop(image)
+                        extra_info, rag_images = retriever.retrieve(database, inp, detected_regions, queries = crops, topK = args.topK)
                     
                         for i, ret_path in enumerate(rag_images):
                             img = load_image(ret_path)
@@ -120,7 +117,7 @@ def main(args):
             
             # Similar operation in model_worker.py
             image_tensor = process_images(images, image_processor, model.config)
-            print(image_tensor)
+
 
             if type(image_tensor) is list:
                 image_tensor = [image.to(model.device, dtype=torch.float16) for image in image_tensor]
@@ -191,7 +188,6 @@ def main(args):
             
             # Similar operation in model_worker.py
             image_tensor = process_images(images, image_processor, model.config)
-            print(image_tensor)
 
             if type(image_tensor) is list:
                 image_tensor = [image.to(model.device, dtype=torch.float16) for image in image_tensor]
