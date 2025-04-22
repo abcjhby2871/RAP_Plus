@@ -1,1 +1,2 @@
-CUDA_VISIBLE_DEVICES='0' python cli.py --model-path Hoar012/RAP-LLaVA-13b --image-file data/0.jpeg --retrieval --database ./example_database --topK 1
+source ~/anaconda3/bin/activate rap
+CUDA_VISIBLE_DEVICES='4' python cli.py --model-path Hoar012/RAP-LLaVA-13b --image-file ./example_database/denisdang.png --retrieval --database ./example_database --topK 1

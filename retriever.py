@@ -24,9 +24,9 @@ class ClipRetriever():
         self.batch_size = batch_size
         self.data_dir = data_dir
         
-        self.clip_model = CLIPModel.from_pretrained("/home/test/pytorch_hxh/RAP-MLLM-main/clip-vit-large-patch14-336").to(self.device)
-        self.text_model= CLIPTextModel.from_pretrained("/home/test/pytorch_hxh/RAP-MLLM-main/clip-vit-large-patch14-336").to(self.device)
-        self.feature_extractor = CLIPProcessor.from_pretrained("/home/test/pytorch_hxh/RAP-MLLM-main/clip-vit-large-patch14-336")
+        self.clip_model = CLIPModel.from_pretrained(clip_model).to(self.device)
+        self.text_model= CLIPTextModel.from_pretrained(clip_model).to(self.device)
+        self.feature_extractor = CLIPProcessor.from_pretrained(clip_model)
         self.index = faiss.IndexFlatL2(embed_dim)
 
         if create_index:
@@ -180,4 +180,3 @@ class ClipRetriever():
             extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
         
         return extra_info, rag_images
-

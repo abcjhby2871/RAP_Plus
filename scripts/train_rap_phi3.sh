@@ -1,6 +1,6 @@
 #!/bin/bash
 
-deepspeed llava/train/train.py \
+deepspeed llava/train/rap_train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path MBZUAI/LLaVA-Phi-3-mini-4k-instruct \
