@@ -1,6 +1,0 @@
-model_path: "Hoar012/RAP-LLaVA-13b"
-device: "cuda"
-retrieval: true
-database: "your_db_folder"
-index_path: null
-topK: 1

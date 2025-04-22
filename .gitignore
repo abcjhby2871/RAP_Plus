@@ -12,3 +12,4 @@ runs/
 **__pycache__**
 !images/framework.png 
 !images/teaser.png
+*.env

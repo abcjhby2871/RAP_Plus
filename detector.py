@@ -95,7 +95,6 @@ class Detector():
                 "class_name": class_name,
                 "box": [x1, y1, x2, y2]
             })
-
             crop_np = np.array(crop)
 
             # If it's the full image, detect faces in the whole image
