@@ -91,36 +91,37 @@ class ClipRetriever():
         print(dists, filenames)
         return np.array(dists), filenames
     
-    # def retrieve(self, database, inp, detected_region,queries, topK = 2):
-    #     rag_images = dict()
-    #     for concept in database["concept_dict"]:
-    #         if concept in inp:
-    #             rag_images[database["concept_dict"][concept]["image"]] = 0
-    #     if len(queries) > 0:
-    #         D, filenames = self.image_search(queries, k=2)
-    #         ret_image_path = []
-    #         for files in filenames:
-    #             ret_image_path += files
+    def retrieve(self, database, inp, detected_region,queries, topK = 2):
+        rag_images = dict()
+        for concept in database["concept_dict"]:
+            if concept in inp:
+                rag_images[database["concept_dict"][concept]["image"]] = 0
+        if len(queries) > 0:
+            D, filenames = self.image_search(queries, k=2)
+            ret_image_path = []
+            for files in filenames:
+                ret_image_path += files
             
-    #         D = D.flatten()
-    #         order = D.argsort()
-    #         for i in order:
-    #             if len(rag_images) >= topK:
-    #                 break
-    #             if ret_image_path[i] in rag_images:
-    #                 continue
+            D = D.flatten()
+            order = D.argsort()
+            for i in order:
+                if len(rag_images) >= topK:
+                    break
+                if ret_image_path[i] in rag_images:
+                    continue
                 
-    #             rag_images[ret_image_path[i]] = D[i].tolist()
+                rag_images[ret_image_path[i]] = D[i].tolist()
         
-    #     extra_info = ""
-    #     for i, ret_path in enumerate(rag_images):
-    #         ret_path = ret_path.lstrip('./')
-    #         tag = database["path_to_concept"][ret_path]
-    #         name = database["concept_dict"][tag]["name"]
-    #         info = database["concept_dict"][tag]["info"]
-    #         extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
+        extra_info = ""
+        for i, ret_path in enumerate(rag_images):
+            ret_path = ret_path.lstrip('./')
+            tag = database["path_to_concept"][ret_path]
+            name = database["concept_dict"][tag]["name"]
+            info = database["concept_dict"][tag]["info"]
+            extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
         
-    #     return extra_info, rag_images
+        return extra_info, rag_images
+
     def retrieve_for_box(self,database,inp,detected_regions,queries,topK=2):
         rag_images = dict()
         ret_dict = dict()
@@ -148,53 +149,3 @@ class ClipRetriever():
                    
        # Step2 #TODO
         raise NotImplementedError
-       
-    def retrieve(self, database, inp, detected_regions, queries, topK = 2):
-        rag_images = dict()
-        for detected_region, crop in zip(detected_regions, queries):
-            if detected_region["class_name"] == "person":
-                if isinstance(crop, Image.Image):
-                    crop = np.array(crop)
-                matched_faces = face_recognition.face_encodings(crop)
-                if matched_faces:
-                    matched_face_encoding = matched_faces[0]
-                    for concept in database["concept_dict"]:
-                        if  database["concept_dict"][concept]["category"] == "person":
-                            concept_image_path = database["concept_dict"][concept]["image"]
-                            concept_image = face_recognition.load_image_file(concept_image_path)
-                            concept_encoding = face_recognition.face_encodings(concept_image)
-                            if concept_encoding:
-                                concept_encoding = concept_encoding[0]
-                                distance = face_recognition.face_distance([concept_encoding], matched_face_encoding)[0]
-                                if distance < 0.1:
-                                    rag_images[concept_image_path] = distance
-            else:
-                for concept in database["concept_dict"]:
-                    if concept in inp:
-                        rag_images[database["concept_dict"][concept]["image"]] = 0
-
-        if len(queries) > 0:
-            D, filenames = self.image_search(queries, k=2)
-            ret_image_path = []
-            for files in filenames:
-                ret_image_path += files
-            
-            D = D.flatten()
-            order = D.argsort()
-            for i in order:
-                if len(rag_images) >= topK:
-                    break
-                if ret_image_path[i] in rag_images:
-                    continue
-                
-                rag_images[ret_image_path[i]] = D[i].tolist()
-
-        extra_info = ""
-        for i, ret_path in enumerate(rag_images):
-            ret_path = ret_path.lstrip('./')
-            tag = database["path_to_concept"][ret_path]
-            name = database["concept_dict"][tag]["name"]
-            info = database["concept_dict"][tag]["info"]
-            extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
-        
-        return extra_info, rag_images
