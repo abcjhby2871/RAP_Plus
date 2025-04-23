@@ -122,15 +122,24 @@ class ClipRetriever():
         
         return extra_info, rag_images
 
-    def retrieve_for_box(self,database,inp,detected_regions,queries,topK=2):
+    def retrieve_for_box(self,database,inp,detected_regions,queries):
         rag_images = dict()
+        rag_images_box = dict()
+        rag_images_extra_info = dict()
         ret_dict = dict()
-        # Step1 如果概念被提到了，检索图像中有没有
-        for concept in database["concept_dict"]:
-            if concept in inp: 
-                distance = None
-                for detected_region, crop in zip(detected_regions, queries):
-                   if detected_region["class_name"] == "person" and database["concept_dict"][concept]["category"]=="person":
+
+        # # text rag, consider the complexity, no longer include
+        # for concept in database["concept_dict"]:
+        #     if concept in inp:
+        #         rag_images[database["concept_dict"][concept]["image"]] = 0
+
+        # Step1 for person
+        for detected_region, crop in zip(detected_regions, queries):
+            # 
+            if detected_region["class_name"] == "person":
+                print("person")
+                for concept in database["concept_dict"]:
+                    if database["concept_dict"][concept]["category"]=="person":
                         if isinstance(crop, Image.Image):
                             crop = np.array(crop)
                         matched_faces = face_recognition.face_encodings(crop)
@@ -142,10 +151,31 @@ class ClipRetriever():
                             if concept_encoding:
                                 concept_encoding = concept_encoding[0]
                                 distance = face_recognition.face_distance([concept_encoding], matched_face_encoding)[0]
-                                if distance < 0.1: # 假如是人且与某个概念很近
+                                # print(distance)
+                                if distance < 0.4:
                                     rag_images[concept_image_path] = distance
-                                elif concept in inp:
-                                    ret_dict[concept] = 0      
-                   
-       # Step2 #TODO
-        raise NotImplementedError
+                                    rag_images_box[concept_image_path] = detected_region["box"]
+
+            else:
+                print("other")
+                D, filenames = self.image_search(crop, k=3)
+                D = D.flatten()
+                order = D.argsort()
+                ret_image_path = []
+                for files in filenames:
+                    ret_image_path += files
+                for i in order:
+                    rag_images[ret_image_path[i]] = D[i].tolist()
+                    rag_images_box[ret_image_path[i]] = detected_region["box"]
+                    break # only select the most important one
+        
+        extra_info = ""        
+        for i, ret_path in enumerate(rag_images):
+            ret_path = ret_path.lstrip('./')
+            tag = database["path_to_concept"][ret_path]
+            name = database["concept_dict"][tag]["name"]
+            info = database["concept_dict"][tag]["info"]
+            extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"                
+            rag_images_extra_info[ret_path] = extra_info
+            
+        return rag_images, rag_images_box, rag_images_extra_info
