@@ -31,7 +31,7 @@ class ClipRetriever:
 
 
 # 对接帧选择算法，输入视频路径，返回关键帧与对应图像
-def select_key_frame(video_path,**kwargs)->List[Tuple[int,Image.Image]]: #frame_id, image
+def select_key_frame(video_path:str,**kwargs)->List[Tuple[int,Image.Image]]: #frame_id, image
     #TODO
     ret_list = []
     data = import_py_file(kwargs["key_frame_config"])
