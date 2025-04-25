@@ -159,8 +159,8 @@ class ClipRetriever():
                     rag_images[ret_image_path[i]] = D[i].tolist()
                     rag_images_box[ret_image_path[i]] = detected_region["box"]
                     break # only select the most important one
-            ret_dict = dict()
-            for k,v in rag_images_box.items():
-                print(k,v)
-                ret_dict[database.path_to_concept(k)] = v
+        ret_dict = dict()
+        for k,v in rag_images_box.items():
+            print(k,v)
+            ret_dict[database.path_to_concept(k)] = v
         return ret_dict
