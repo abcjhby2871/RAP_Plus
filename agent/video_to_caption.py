@@ -20,14 +20,14 @@ def import_py_file(filepath, module_name='my_data_module'):
 # 假设 my_data.py 路径为 './my_data.py'
 
 
-# class ClipRetriever:
-#     def __init__(self,data_dir , index_path, create_index):
-#         pass 
-#     def retrieve_for_box(self,database, inp, detected_regions, queries ,topK,**kwargs):
-#         #TODO 这里是手动做的，返回值是  
-#         data = import_py_file(kwargs["key_frame_config"])
-#         T = data[kwargs["frame_id"]]
-#         return T,None
+class ClipRetriever:
+    def __init__(self,data_dir , index_path, create_index):
+        pass 
+    def retrieve_for_box(self,database, inp, detected_regions, queries ,**kwargs):
+        #TODO 这里是手动做的，返回值是  
+        data = import_py_file(kwargs["key_frame_config"])
+        T = data[kwargs["frame_id"]]
+        return T
 
 
 # 对接帧选择算法，输入视频路径，返回关键帧与对应图像

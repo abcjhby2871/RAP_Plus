@@ -36,7 +36,10 @@ class VideoAgent:
         for k in self.external_captioner.database:
             if k in prompt and k not in element_list:
                 exclude_list.append(k)
-        query = TEMPLEATE_PROMPT["summary"]["user"](prompt, caption_list, element_list, exclude_list)
+        info_dict = dict()
+        for e in element_list:
+            info_dict[e] = self.external_captioner.database.get_info(e)
+        query = TEMPLEATE_PROMPT["summary"]["user"](prompt, caption_list, info_dict, exclude_list)
         print(query)
         response = self.agent.ask(query,None,TEMPLEATE_PROMPT["summary"]["system"])
         return response

@@ -43,6 +43,9 @@ class DataBase:
     
     def __iter__(self):
         return iter(self.database)
+    
+    def get_info(self,concept):
+        return {k:v for k,v in self[concept].items() if k!="image"}
 
 
 
