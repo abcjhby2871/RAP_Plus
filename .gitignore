@@ -9,6 +9,7 @@ runs/
 /tmp
 /my*
 *.egg-info
+/example_database
 **__pycache__**
 !images/framework.png 
 !images/teaser.png
