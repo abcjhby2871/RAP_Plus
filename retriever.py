@@ -123,7 +123,7 @@ class ClipRetriever():
             extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
         return extra_info, rag_images
 
-    def retrieve_for_box(self,database,inp,detected_regions,queries,distance_threshold=0.4):
+    def retrieve_for_box(self,database,inp,detected_regions,queries,distance_threshold=0.4,**kwargs):
         rag_images = dict()
         rag_images_box = dict()
         for detected_region, crop in zip(detected_regions, queries):

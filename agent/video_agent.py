@@ -28,7 +28,7 @@ class VideoAgent:
         element_list = set()
         exclude_list = []
         for frame_id,image in key_frame_list:
-            concept_box_list = self.external_captioner.retrieve(image,prompt,topK=2,frame_id=frame_id,**kwargs)
+            concept_box_list = self.external_captioner.retrieve(image,prompt,frame_id=frame_id,**kwargs)
             caption_list.append(self._frame_caption(image,frame_id,prompt,concept_box_list))
             for k in concept_box_list:
                 print(k)
