@@ -1,28 +1,16 @@
 import os
 import json
 import base64
-from openai import OpenAI
 from typing import List, Optional, Dict, Any,Union
 from PIL import Image
 from io import BytesIO
 import time
+import logging
 
 
-class OpenAIAgent:
-    def __init__(
-        self,
-        max_retries: int = 2,
-        temperature: float = 0.2,
-    ):
-        self.model = os.getenv("OPENAI_MODEL")
-        self.max_retries = max_retries
-        self.temperature = temperature
-        kwargs = dict()
-        if "OPENAI_BASEURL" in os.environ:
-            kwargs["base_url"] = os.environ["OPENAI_BASEURL"]
-        if "OPENAI_API_KEY" in os.environ:
-            kwargs["api_key"] = os.environ["OPENAI_API_KEY"]
-        self.client = OpenAI(**kwargs)
+class BasicAgent:
+    def __init__(self):
+        pass 
 
     def _encode_image(self, image: Image.Image) -> str:
         """Convert PIL image to base64"""
@@ -51,17 +39,17 @@ class OpenAIAgent:
 
     def _validate_json(self, text: str) -> Optional[Dict[str, Any]]:
         try:
+            text = text.strip('```').strip('json').strip()
             return json.loads(text)
         except json.JSONDecodeError as e:
             print(f"❌ JSON 解码失败: {e}\n{text}")
             return None
-
+    
     def ask(self, prompt: Union[str,dict],  images: Optional[List[Image.Image]] = None, system_prompt: Optional[str] = None, use_json=False) -> Dict[str, Any]:
         """主函数：输入提示词和可选图像，返回结构化 JSON"""
-        for attempt in range(1, self.max_retries + 1):
-            print(f"🔁 尝试第 {attempt} 次...")
+        for _ in range(1, self.max_retries + 1):
             try:
-                response = self.client.chat.completions.create(
+                response = self.chat(
                     model=self.model,
                     messages=self._prepare_messages(prompt, system_prompt, images),
                     temperature=self.temperature,
@@ -72,11 +60,60 @@ class OpenAIAgent:
                     result = self._validate_json(reply)
                 else:
                     result = reply
+                logging.info(f"Q:{prompt}\nA:{result}")
                 if result is not None:
                     return result
             except Exception as e:
                 print(f"⚠️ OpenAI API 请求失败: {e}")
             time.sleep(2)  # 简单退避策略
         raise RuntimeError("⛔ 所有尝试均失败，未能获取合法 JSON 响应。")
+
+class OpenAIAgent(BasicAgent):
+    def __init__(
+        self,
+        max_retries: int = 2,
+        temperature: float = 0.2,
+    ):
+        from openai import OpenAI
+        self.model = os.getenv("OPENAI_MODEL")
+        self.max_retries = max_retries
+        self.temperature = temperature
+        kwargs = dict()
+        if "OPENAI_BASEURL" in os.environ:
+            kwargs["base_url"] = os.environ["OPENAI_BASEURL"]
+        if "OPENAI_API_KEY" in os.environ:
+            kwargs["api_key"] = os.environ["OPENAI_API_KEY"]
+        self.client = OpenAI(**kwargs)
+
+    def chat(self,*args,**kwargs):
+        return self.client.chat.completions.create(*args,**kwargs)  
+
+class DoubaoAgent:
+    def __init__(
+        self,
+        max_retries: int = 2,
+        temperature: float = 0.2,
+    ):
+        self.max_retries = max_retries
+        self.temperature = temperature
+        # 初始化火山引擎 Lingma 服务
+        from volcenginesdkarkruntime import Ark
+        self.client = Ark(
+            ak=os.environ.get("VOLCENGINE_ACCESS_KEY"),
+            sk=os.environ.get("VOLCENGINE_SECRET_KEY"),
+        )
+        self.model = os.getenv("VOLCENGINE_MODEL")
+
+    def chat(self,*args,**kwargs):
+        return self.client.chat.completions.create(*args,**kwargs)
         
-        
+
+class GeminiAgent:
+    def __init__(self, model="gemini-pro", api_key=None):
+        import google.generativeai as genai
+        genai.configure(api_key=api_key or os.getenv("GOOGLE_API_KEY"))
+        self.model = genai.GenerativeModel(model)
+
+    def chat(self, prompt: str):
+        response = self.model.generate_content(prompt)
+        return response.text

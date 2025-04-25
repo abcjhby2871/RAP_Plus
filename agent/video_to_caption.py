@@ -1,5 +1,5 @@
 from typing import List,Tuple
-from PIL import Image 
+from PIL import Image,ImageDraw 
 import json
 import subprocess
 import importlib
@@ -8,6 +8,7 @@ import sys
 from detector import Detector
 from retriever import ClipRetriever
 from data_base import DataBase
+# from select_frame import select_key_frame
 
 def import_py_file(filepath, module_name='my_data_module'):
     # 创建 spec
@@ -29,69 +30,38 @@ class ClipRetriever:
         T = data[kwargs["frame_id"]]
         return T
 
-
 # 对接帧选择算法，输入视频路径，返回关键帧与对应图像
-def select_key_frame(video_path:str,max_num_frames:int, score_path:str, frame_path:str, output_file:str, ratio=1, t1=0.8, t2=-100, all_depth=2)->List[Tuple[int,Image.Image]]: #frame_id, image
+
+def select_key_frame(video_path,**kwargs)->List[Tuple[int,Image.Image]]: #frame_id, image
     #TODO
-    outs = []
-    segs = []
+    ret_list = []
+    data = import_py_file(kwargs["key_frame_config"])
+    for f in data:
+        # cmd = [
+        #     "ffmpeg",
+        #     "-i", f"{video_path}",
+        #     "-vf", f"select=eq(n\\,{f})",
+        #     "-vframes", "1",
+        #     f"{kwargs['outputdir']}/frame_{f}.png"
+        # ]
+        # subprocess.run(cmd)
+        ret_list.append((f,Image.open(f"{kwargs['outputdir']}/frame_{f}.png").convert("RGB")))
+    return  ret_list
 
-    if not os.path.exists(output_file):
-        os.makedirs(output_file)
+def draw_image(img:Image.Image,boxes:list,color_list:list):
+    assert len(boxes)<=len(color_list)
+    img = img.copy()
+    h,w = img.size
+    draw = ImageDraw.Draw(img)
+    for i,box in enumerate(boxes):
+        box = (int(box[0]*h),int(box[1]*w),int(box[2]*h),int(box[3]*w))
+        draw.rectangle(box, fill=color_list[i])
+    return img
 
-    with open(score_path) as f:
-        itm_outs = json.load(f)
-    with open(frame_path) as f:
-        fn_outs = json.load(f)
-
-    for itm_out,fn_out in zip(itm_outs,fn_outs):
-        nums = int(len(itm_out)/ratio)
-        new_score = [itm_out[num*ratio] for num in range(nums)]
-        new_fnum = [fn_out[num*ratio] for num in range(nums)]
-        score = new_score
-        fn = new_fnum
-        num = max_num_frames
-        if len(score) >= num:
-            normalized_data = (score - np.min(score)) / (np.max(score) - np.min(score))
-            a, b = meanstd(len(score), [dict(score=normalized_data,depth=0)], num, [fn], t1, t2, all_depth)
-            segs.append(len(a))
-            out = []
-            if len(score) >= num:
-                for s,f in zip(a,b): 
-                    f_num = int(num / 2**(s['depth']))
-                    topk = heapq.nlargest(f_num, range(len(s['score'])), s['score'].__getitem__)
-                    f_nums = [f[t] for t in topk]
-                    out.extend(f_nums)
-            out.sort()
-            outs.append(out)
-        else:
-            outs.append(fn)
-
-    out_score_path = os.path.join(output_file, 'selected_frames.json')
-    with open(out_score_path, 'w') as f:
-        json.dump(outs, f)
-
-    # sample image from the video
-    vr = VideoReader(video_path, ctx=cpu(0), num_threads=1)
-    total_frames = len(vr)
-
-    frames_list = []
-    for out in outs:
-        for frame_number in out:
-            if frame_number < total_frames:
-                frame = vr[frame_number].asnumpy()
-
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frame_rgb = Image.fromarray(frame_rgb)
-                frames_list.append((frame_number, frame_rgb))
-            else:
-                print(f"error!: frame index {frame_number} out of index")
-    return frames_list
-
-# 检索图像，查询数据库，获取外部信息
 class External_Captioner:
     def __init__(self):
         self.detector = Detector()
+        self.colors  = ['red','yellow','blue','green','grey']
     
     def load_database(self,database_root,index_path=None):
         self.database = DataBase(database_root)
@@ -110,9 +80,10 @@ class External_Captioner:
         crops, detected_regions = self.detector.detect_and_crop(img)
         box_list = self.retriever.retrieve_for_box(self.database, inp, detected_regions, queries = crops, **kwargs)
         ret_list = dict()
-        for k,v in box_list.items():
-            ret_list[k] = (v,self.database[k]["category"])
-        return box_list
+        caption_image = draw_image(img,box_list.values(),self.colors)
+        for i,k in enumerate(box_list.keys()):
+            ret_list[k] = (self.colors[i],self.database[k]["category"])
+        return ret_list, caption_image
 
 
         
