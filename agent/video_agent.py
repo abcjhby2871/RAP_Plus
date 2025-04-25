@@ -14,7 +14,7 @@ class VideoAgent:
         self.external_captioner = External_Captioner()
          
     def _frame_caption(self, img:Image.Image,frame_id:int,overall_question=None,concept_box_list:Optional[dict]=None):
-        query = TEMPLEATE_PROMPT["single_frame"]["user"](frame_id,overall_question,concept_box_list)
+        query = TEMPLEATE_PROMPT["single_frame"]["user"](frame_id,overall_question,concept_box_list)        
         print(query)
         response = self.agent.ask(query,[img],TEMPLEATE_PROMPT["single_frame"]["system"])
         return response
@@ -28,12 +28,12 @@ class VideoAgent:
         element_list = set()
         exclude_list = []
         for frame_id,image in key_frame_list:
-            concept_box_list,_ = self.external_captioner.retrieve(image,prompt,topK=2,frame_id=frame_id,**kwargs)
+            concept_box_list = self.external_captioner.retrieve(image,prompt,topK=2,frame_id=frame_id,**kwargs)
             caption_list.append(self._frame_caption(image,frame_id,prompt,concept_box_list))
             for k in concept_box_list:
                 print(k)
                 element_list.add(k)
-        for k in self.external_captioner.concept_list():
+        for k in self.external_captioner.database:
             if k in prompt and k not in element_list:
                 exclude_list.append(k)
         query = TEMPLEATE_PROMPT["summary"]["user"](prompt, caption_list, element_list, exclude_list)

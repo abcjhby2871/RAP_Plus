@@ -7,6 +7,7 @@ import sys
 
 from detector import Detector
 from retriever import ClipRetriever
+from data_base import DataBase
 
 def import_py_file(filepath, module_name='my_data_module'):
     # 创建 spec
@@ -19,14 +20,14 @@ def import_py_file(filepath, module_name='my_data_module'):
 # 假设 my_data.py 路径为 './my_data.py'
 
 
-class ClipRetriever:
-    def __init__(self,data_dir , index_path, create_index):
-        pass 
-    def retrieve(self,database, inp, detected_regions, queries ,topK,**kwargs):
-        #TODO 这里是手动做的，返回值是  
-        data = import_py_file(kwargs["key_frame_config"])
-        T = data[kwargs["frame_id"]]
-        return T,None
+# class ClipRetriever:
+#     def __init__(self,data_dir , index_path, create_index):
+#         pass 
+#     def retrieve_for_box(self,database, inp, detected_regions, queries ,topK,**kwargs):
+#         #TODO 这里是手动做的，返回值是  
+#         data = import_py_file(kwargs["key_frame_config"])
+#         T = data[kwargs["frame_id"]]
+#         return T,None
 
 
 # 对接帧选择算法，输入视频路径，返回关键帧与对应图像
@@ -51,16 +52,11 @@ class External_Captioner:
     def __init__(self):
         self.detector = Detector()
     
-    def concept_list(self):
-        return self.database["concept_dict"]
-
     def load_database(self,database_root,index_path=None):
-        with open(f"{database_root}/database.json", "r") as f:
-            database = json.load(f)
-        self.database = database
+        self.database = DataBase(database_root)
         all_category = []
-        for concept in database["concept_dict"]:
-            cat = database["concept_dict"][concept]["category"]
+        for concept in self.database:
+            cat = self.database[concept]["category"]
             if cat not in all_category:
                 all_category.append(cat)
         self.detector.model.set_classes(all_category)
@@ -69,10 +65,13 @@ class External_Captioner:
         else:
             self.retriever = ClipRetriever(data_dir = database_root, index_path = index_path, create_index = False)
     
-    def retrieve(self,img:Image.Image,inp,topK=2,**kwargs):
+    def retrieve(self,img:Image.Image,inp="",**kwargs):
         crops, detected_regions = self.detector.detect_and_crop(img)
-        extra_info,rag_images = self.retriever.retrieve(self.database, inp, detected_regions, queries = crops, topK = topK,**kwargs) #TODO
-        return extra_info,rag_images
+        box_list = self.retriever.retrieve_for_box(self.database, inp, detected_regions, queries = crops, **kwargs)
+        ret_list = dict()
+        for k,v in box_list.items():
+            ret_list[k] = (v,self.database[k]["category"])
+        return box_list
 
 
         

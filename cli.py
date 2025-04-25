@@ -14,6 +14,7 @@ from transformers import TextStreamer
 
 from detector import Detector
 from retriever import ClipRetriever
+from data_base import DataBase
 
 def load_image(image_file):
     if image_file.startswith('http://') or image_file.startswith('https://'):
@@ -51,13 +52,12 @@ def main(args):
 
     if args.retrieval:    
         detector = Detector()
-        with open(f"{args.database}/database.json", "r") as f:
-            database = json.load(f)
+        database = DataBase(args.database)
         
         # Set interested classes
         all_category = []
-        for concept in database["concept_dict"]:
-            cat = database["concept_dict"][concept]["category"]
+        for concept in database:
+            cat = database[concept]["category"]
             if cat not in all_category:
                 all_category.append(cat)
         detector.model.set_classes(all_category)

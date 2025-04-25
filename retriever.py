@@ -7,8 +7,10 @@ from tqdm import tqdm
 import os
 import torch
 import numpy as np
-from transformers import CLIPTextModel, CLIPVisionModel, CLIPModel, CLIPProcessor
+from transformers import CLIPTextModel,  CLIPModel, CLIPProcessor
 import face_recognition
+from data_base import DataBase
+
 def load_image(image_file):
     if image_file.startswith('http://') or image_file.startswith('https://'):
         response = requests.get(image_file)
@@ -16,6 +18,7 @@ def load_image(image_file):
     else:
         image = Image.open(image_file).convert('RGB')
     return image
+
 
 clip_model = 'openai/clip-vit-large-patch14-336'
 class ClipRetriever():
@@ -33,7 +36,7 @@ class ClipRetriever():
             print(f"Creating database from {data_dir}")
 
             file_paths = []
-            for root, dirs, files in os.walk(data_dir):
+            for root, _, files in os.walk(data_dir):
                 for file in files:
                     if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                         file_path = os.path.join(root, file)
@@ -91,11 +94,11 @@ class ClipRetriever():
         print(dists, filenames)
         return np.array(dists), filenames
     
-    def retrieve(self, database, inp, detected_region,queries, topK = 2):
+    def retrieve(self, database:DataBase, inp, detected_region,queries, topK = 2):
         rag_images = dict()
-        for concept in database["concept_dict"]:
+        for concept in database:
             if concept in inp:
-                rag_images[database["concept_dict"][concept]["image"]] = 0
+                rag_images[database[concept]["image"][0]] = 0
         if len(queries) > 0:
             D, filenames = self.image_search(queries, k=2)
             ret_image_path = []
@@ -114,48 +117,36 @@ class ClipRetriever():
         
         extra_info = ""
         for i, ret_path in enumerate(rag_images):
-            ret_path = ret_path.lstrip('./')
-            tag = database["path_to_concept"][ret_path]
-            name = database["concept_dict"][tag]["name"]
-            info = database["concept_dict"][tag]["info"]
+            tag = database.path_to_concept(ret_path)
+            name = database[tag]["name"]
+            info = database[tag]["info"]
             extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"
-        
         return extra_info, rag_images
 
-    def retrieve_for_box(self,database,inp,detected_regions,queries):
+    def retrieve_for_box(self,database,inp,detected_regions,queries,distance_threshold=0.4):
         rag_images = dict()
         rag_images_box = dict()
-        rag_images_extra_info = dict()
-        ret_dict = dict()
-
-        # # text rag, consider the complexity, no longer include
-        # for concept in database["concept_dict"]:
-        #     if concept in inp:
-        #         rag_images[database["concept_dict"][concept]["image"]] = 0
-
-        # Step1 for person
         for detected_region, crop in zip(detected_regions, queries):
             # 
             if detected_region["class_name"] == "person":
                 print("person")
-                for concept in database["concept_dict"]:
-                    if database["concept_dict"][concept]["category"]=="person":
+                for concept in database:
+                    if database[concept]["category"]=="person":
                         if isinstance(crop, Image.Image):
                             crop = np.array(crop)
                         matched_faces = face_recognition.face_encodings(crop)
                         if matched_faces:
                             matched_face_encoding = matched_faces[0]
-                            concept_image_path = database["concept_dict"][concept]["image"]
+                            concept_image_path = database[concept]["image"][0]
                             concept_image = face_recognition.load_image_file(concept_image_path)
                             concept_encoding = face_recognition.face_encodings(concept_image)
                             if concept_encoding:
                                 concept_encoding = concept_encoding[0]
                                 distance = face_recognition.face_distance([concept_encoding], matched_face_encoding)[0]
-                                # print(distance)
-                                if distance < 0.4:
+                                # print(f"dis:{distance},thres:{distance_threshold}")
+                                if distance < distance_threshold:
                                     rag_images[concept_image_path] = distance
                                     rag_images_box[concept_image_path] = detected_region["box"]
-
             else:
                 print("other")
                 D, filenames = self.image_search(crop, k=3)
@@ -168,14 +159,8 @@ class ClipRetriever():
                     rag_images[ret_image_path[i]] = D[i].tolist()
                     rag_images_box[ret_image_path[i]] = detected_region["box"]
                     break # only select the most important one
-        
-        extra_info = ""        
-        for i, ret_path in enumerate(rag_images):
-            ret_path = ret_path.lstrip('./')
-            tag = database["path_to_concept"][ret_path]
-            name = database["concept_dict"][tag]["name"]
-            info = database["concept_dict"][tag]["info"]
-            extra_info += f"{i+1}.<image>\n Name: <{name}>, Info: {info}\n"                
-            rag_images_extra_info[ret_path] = extra_info
-            
-        return rag_images, rag_images_box, rag_images_extra_info
+            ret_dict = dict()
+            for k,v in rag_images_box.items():
+                print(k,v)
+                ret_dict[database.path_to_concept(k)] = v
+        return ret_dict
