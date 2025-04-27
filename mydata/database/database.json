@@ -1,0 +1,141 @@
+{
+    "concept_dict": {
+        "<bo>": {
+            "name": "bo",
+            "image": "./bo.png",
+            "info": "<bo> is a well-groomed, medium-sized Shiba Inu with a thick, cinnamon-colored coat, cream accents, alert eyes, and a black collar.",
+            "category": "dog"
+        },
+        "<brown-duck>": {
+            "name": "brown-duck",
+            "image": "./brown-duck.png",
+            "info": "<brown-duck> is a brown, plush duck toy with a green head, an yellow beak and feet, and a white stripe around its neck.",
+            "category": "plush toy"
+        },
+        "<butin>": {
+            "name": "butin",
+            "image": "./butin.png",
+            "info": "<butin> is a husky, lying on its back with its paws in the air and its eyes closed. The husky has a white and brown coat.",
+            "category": "dog"
+        },
+        "<cat-cup>": {
+            "name": "cat-cup",
+            "image": "./cat-cup.png",
+            "info": "<cat-cup> is a white ceramic mug with a cat face design. The mug has a handle on the side.",
+            "category": "cup"
+        },
+        "<chua-thien-mu>": {
+            "name": "chua-thien-mu",
+            "image": "./chua-thien-mu.png",
+            "info": "<chua-thien-mu> is a tall, octagonal pagoda with a pointed roof. The pagoda is made of gray and red stone and has a series of windows and decorative elements.",
+            "category": "building"
+        },
+        "<ciin>": {
+            "name": "ciin",
+            "image": "./ciin.png",
+            "info": "<ciin> is a young woman with long blonde hair, wearing a white sleeveless shirt. She has bright red lipstick and light makeup.",
+            "category": "person"
+        },
+        "<denisdang>": {
+            "name": "denisdang",
+            "image": "./denisdang.png",
+            "info": "<denisdang> is a man with white hair and a pink and grey sweater.",
+            "category": "person"
+        },
+        "<dragon>": {
+            "name": "dragon",
+            "image": "./dragon.png",
+            "info": "<dragon> is a pink and yellow plush toy in the shape of a dragon. It has a blue wing and yellow spots on its body.",
+            "category": "plush toy"
+        },
+        "<duck-banana>": {
+            "name": "duck-banana",
+            "image": "./duck-banana.png",
+            "info": "<duck-banana> is a large, white, plush toy shaped like a duck with an orange beak, feet, and a yellow chest.",
+            "category": "plush toy"
+        },
+        "<dug>": {
+            "name": "dug",
+            "image": "./dug.png",
+            "info": "<dug> is a golden retriever from the movie Up. He has a brown coat and a big, goofy smile, wearing a collar with some round objects.",
+            "category": "cartoon character"
+        },
+        "<messi>": {
+            "name": "messi",
+            "image": "./messi.png",
+            "info": "<messi> is an Argentine professional footballer widely considered one of the greatest players of all time. He has won numerous awards, including multiple Ballon d'Or trophies.",
+            "category": "person"
+        },
+        "<neymar>": {
+            "name": "neymar.",
+            "image": "./neymar.png",
+            "info": "<neymar>, also known as Neymar da Silva Santos Júnior, is a Brazilian professional footballer known for his speed, dribbling, and flair. He has played for top clubs like Barcelona and Paris Saint-Germain.",
+            "category": "person"
+        },
+        "<sualez>": {
+            "name": "sualez",
+            "image": "./sualez.png",
+            "info": "<sualez> is a Uruguayan professional footballer known for his goal-scoring ability and controversial moments on the field. He has played for clubs like Barcelona and Atlético Madrid.",
+            "category": "person"
+        },
+        "<hinton>": {
+            "name": "Geoffrey Hinton",
+            "image": "./hinton.png",
+            "info": "Geoffrey Hinton is a pioneering researcher in the field of artificial intelligence and deep learning. Known as one of the 'godfathers of AI', his work on neural networks and backpropagation revolutionized the field.",
+            "category": "person"
+        },
+        "<lecun>": {
+            "name": "Yann LeCun",
+            "image": "./lecun.png",
+            "info": "Yann LeCun is a computer scientist known for his contributions to machine learning and deep learning, particularly convolutional neural networks (CNNs). He is also one of the 'godfathers of AI'.",
+            "category": "person"
+        },
+        "<bengio>": {
+            "name": "Yoshua Bengio",
+            "image": "./bengio.png",
+            "info": "Yoshua Bengio is a deep learning researcher and one of the pioneers of artificial intelligence. His work on neural networks, particularly deep learning algorithms, has been instrumental in the advancement of the field.",
+            "category": "person"
+        },
+        "<man>":
+        {
+            "name":"Big Man",
+            "image":"./man.png",
+            "info": "Big Man is a greedy Indian guy who enjoys collecting rubbish!",
+            "category": "person"
+        },
+        "<bb>":{
+           "name":"Bob",
+            "info": "Bob is a romantic old man.",
+            "category": "person"
+        },
+        "<gg>":{
+            "name":"GaGa",
+            "info": "GaGa is a highschool girl enjoying playing sports.",
+            "category": "person"
+        },
+        "<ss>":{
+            "name":"XiaoShuai",
+            "info": "XiaoShuai  is a sunny boy.",
+            "category": "person"
+        }
+    },
+    "path_to_concept": {
+        "./bo.png": "<bo>",
+        "./brown-duck.png": "<brown-duck>",
+        "./butin.png": "<butin>",
+        "./cat-cup.png": "<cat-cup>",
+        "./chua-thien-mu.png": "<chua-thien-mu>",
+        "./ciin.png": "<ciin>",
+        "./denisdang.png": "<denisdang>",
+        "./dragon.png": "<dragon>",
+        "./duck-banana.png": "<duck-banana>",
+        "./dug.png": "<dug>",
+        "./messi.png": "<messi>",
+        "./neymar.png": "<neymar>",
+        "./sualez.png": "<sualez>",
+        "./hinton.png": "<hinton>",
+        "./lecun.png": "<lecun>",
+        "./bengio.png": "<bengio>",
+        "./man.png":"<man>"
+    }
+}
