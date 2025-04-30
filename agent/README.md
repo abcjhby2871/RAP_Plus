@@ -27,7 +27,8 @@ database.json中需要有一个键叫concept_dict，格式如下，其中image�
     }
  }
 }
-```        
+```
+预处理后的内容需要组织成如下的文件夹        
 ```
 ├── config.py
 ├── frame_0.png
