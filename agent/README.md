@@ -1,54 +1,62 @@
 # Agent Workflow
-agent的工作流基本搭建完成（未进行提示词的优化）
-## database
-我对database进行了重构，
-要求database_root下有一个database.json文件
-只要包含concept_dict
+## inference
+### Step1 配置环境变量
+方法使用豆包1.5-vision-pro进行测试，确保有下边的环境变量
+```
+OPENAI_BASEURL= https://ark.cn-beijing.volces.com/api/v3
+OPENAI_API_KEY=your api
+OPENAI_MODEL=doubao-1.5-vision-pro-250328
+```
+### Step2 预处理
+TODO:如何提取关键帧与检索定位
+首先要构建一个database，根目录下需要有一个database.json的文件
+```
+database
+├── bo.png
+└── database.json
+```
+database.json中需要有一个键叫concept_dict，格式如下，其中image需要在database的根目录下，填写路径（绝对或者相对于database的根目录），如果没有"image"键会默认使用database下名称为概念的图片(png或jpg)。
 ```json
 {
-    "concept_dict": {
+ "concept_dict": {
     "<bo>": {
-        "name": "bo",
-        "image": "./bo.png", #绝对路径，或者相对根路径的相对路径，或者不填（但一定要保证有图像，且名称为bo.png或bo.jpg）
-        "info": "<bo> is a well-groomed, medium-sized Shiba Inu with a thick, cinnamon-colored coat, cream accents, alert eyes, and a black collar.",
-        "category": "dog"
-    },
-    "<brown-duck>": {
-        "name": "brown-duck",
-        "info": "<brown-duck> is a brown, plush duck toy with a green head, an yellow beak and feet, and a white stripe around its neck.",
-        "category": "plush toy"
-    }   
-        }
+    "name": "bo",
+    "image": "./bo.png", 
+    "info": "<bo> is a well-groomed, medium-sized Shiba Inu with a thick, cinnamon-colored coat, cream accents, alert eyes, and a black collar.",
+    "category": "dog"
+    }
+ }
 }
+```        
 ```
-用法有变
-可以直接通过概念返回对应的dict，可以作为迭代器，也可以使用path_to_concept方法
+├── config.py
+├── frame_0.png
+├── frame_200.png
+├── frame_250.png
+├── frame_50.png
+```
 ```python
-from data_base import DataBase
-self.database = DataBase(database_root)
-all_category = []
-for concept in self.database:
-    cat = self.database[concept]["category"]
-    if cat not in all_category:
-        all_category.append(cat)
-```
-## Retriever
+'''
+config.py中需要有一个data字典，键为关键帧，与该目录下的frame_{id}相对应，值也是一个字典。
+键为概念，值为对应的区域，采用的是xyxy形式的坐标，取左上右下角顶点，归一化到[0,1]
+'''
+data = { 0:{"<man>":[0.5,0.5,1.0,1.0]},
+        50:{"<man>":[0.25,0.25,0.75,0.75]},
+        200:{},
+     250:{"<man>":[0.25,0.25,0.5,0.5]}}
 
 ```
-select_key_frame(video_path=video_path,**kwargs)
-# [(frame_id,PIL.Image.Image)]
-[(0,img1),(50,img2)]
 
-retrieve_for_box(self.database, inp, detected_regions, queries = crops, **kwargs)
-{
-    "<box>":[0.1,0.2,0.3,0.4],
-    "<man>":[0.1,0.2,0.3,0.4]
-}
-```
-
-确保有下边的环境变量
-```
-OPENAI_MODEL=
-OPENAI_API_KEY=
-OPENAI_BASEURL=
+### Step3 agent分析
+```python
+from agent.video_agent import VideoAgent
+agent = VideoAgent()
+agent.load_database("mydata/database") #加载检索库
+question = "Describe the video." #你的问题
+res = agent.ask(question,   
+    key_frame_config="mydata/video3/config.py",    
+    outputdir="mydata/video3"
+            )
+# outputdir是step2中预处理后的关键帧的文件夹，而key_frame_config为对应的config.py的路径
+print(res)
 ```

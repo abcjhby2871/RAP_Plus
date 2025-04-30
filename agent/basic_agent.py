@@ -32,7 +32,6 @@ class BasicAgent:
 
         if system_prompt is not None:
             message.append( {"role":"system","content":system_prompt})
-
         message.append({"role": "user", "content": content})
 
         return message
@@ -67,7 +66,7 @@ class BasicAgent:
                 print(f"⚠️ OpenAI API 请求失败: {e}")
             time.sleep(2)  # 简单退避策略
         raise RuntimeError("⛔ 所有尝试均失败，未能获取合法 JSON 响应。")
-
+    
 class OpenAIAgent(BasicAgent):
     def __init__(
         self,
@@ -88,32 +87,3 @@ class OpenAIAgent(BasicAgent):
     def chat(self,*args,**kwargs):
         return self.client.chat.completions.create(*args,**kwargs)  
 
-class DoubaoAgent:
-    def __init__(
-        self,
-        max_retries: int = 2,
-        temperature: float = 0.2,
-    ):
-        self.max_retries = max_retries
-        self.temperature = temperature
-        # 初始化火山引擎 Lingma 服务
-        from volcenginesdkarkruntime import Ark
-        self.client = Ark(
-            ak=os.environ.get("VOLCENGINE_ACCESS_KEY"),
-            sk=os.environ.get("VOLCENGINE_SECRET_KEY"),
-        )
-        self.model = os.getenv("VOLCENGINE_MODEL")
-
-    def chat(self,*args,**kwargs):
-        return self.client.chat.completions.create(*args,**kwargs)
-        
-
-class GeminiAgent:
-    def __init__(self, model="gemini-pro", api_key=None):
-        import google.generativeai as genai
-        genai.configure(api_key=api_key or os.getenv("GOOGLE_API_KEY"))
-        self.model = genai.GenerativeModel(model)
-
-    def chat(self, prompt: str):
-        response = self.model.generate_content(prompt)
-        return response.text

@@ -2,13 +2,17 @@ import json
 from typing import List, Dict
 
 class VideoAnalyzer:
-    def __init__(self, question: str, context_depth: int = 3,**kwargs):
+    def __init__(self, question: str, context_depth: int = 3, **kwargs):
         self.question = question
         self.context_depth = context_depth
         self.results: List[Dict] = []
 
-    def get_prompt(self, frame_id: str, concept_box_desc: str) -> str:
+    def get_prompt(self, frame_id: str, concept_box_desc: str, enhance_info: bool = False) -> str:
         context_str = self._get_previous_context()
+        if enhance_info is True:
+            info = """\n"concept_features":{"<关键概念1>":"<概念1相关特征>","<关键概念2>":"<概念2相关特征>"}"""
+        else:
+            info = ""
         prompt = f"""
 你是一个视觉分析专家，擅长结合上下文对视频帧进行深入理解。
 
@@ -27,7 +31,7 @@ class VideoAnalyzer:
   "frame_id": "{frame_id}",
   "caption": "<详细描述帧图像内容，包含标注概念>",
   "important_concepts": ["<关键概念1>", "<关键概念2>"],
-  "possible_clues": ["<与问题相关的线索1>", "<可能动机或行为分析>"],
+  "possible_clues": ["<与问题相关的线索1>", "<可能动机或行为分析>"],{info}
   "reasoning_chain": [
     "Step 1: <观察>",
     "Step 2: <与上下文比对>",

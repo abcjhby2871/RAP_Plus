@@ -28,6 +28,10 @@ class DataBase:
         self.database = concept_dict
         self._path_to_concept = path_to_concept
 
+    def update(self,info):
+        #TODO
+        raise NotImplementedError
+    
     def _get_path(self,path):
         path = pathlib.Path(path) 
         if not path.is_absolute():  

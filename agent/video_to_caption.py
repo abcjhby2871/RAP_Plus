@@ -32,7 +32,7 @@ class ClipRetriever:
 
 # 对接帧选择算法，输入视频路径，返回关键帧与对应图像
 
-def select_key_frame(video_path,**kwargs)->List[Tuple[int,Image.Image]]: #frame_id, image
+def select_key_frame(**kwargs)->List[Tuple[int,Image.Image]]: #frame_id, image
     #TODO
     ret_list = []
     data = import_py_file(kwargs["key_frame_config"])
@@ -62,6 +62,9 @@ class External_Captioner:
     def __init__(self):
         self.detector = Detector()
         self.colors  = ['red','yellow','blue','green','grey']
+
+    def update_database(self,info):
+        self.database.update(info)
     
     def load_database(self,database_root,index_path=None):
         self.database = DataBase(database_root)

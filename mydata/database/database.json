@@ -118,24 +118,5 @@
             "info": "XiaoShuai  is a sunny boy.",
             "category": "person"
         }
-    },
-    "path_to_concept": {
-        "./bo.png": "<bo>",
-        "./brown-duck.png": "<brown-duck>",
-        "./butin.png": "<butin>",
-        "./cat-cup.png": "<cat-cup>",
-        "./chua-thien-mu.png": "<chua-thien-mu>",
-        "./ciin.png": "<ciin>",
-        "./denisdang.png": "<denisdang>",
-        "./dragon.png": "<dragon>",
-        "./duck-banana.png": "<duck-banana>",
-        "./dug.png": "<dug>",
-        "./messi.png": "<messi>",
-        "./neymar.png": "<neymar>",
-        "./sualez.png": "<sualez>",
-        "./hinton.png": "<hinton>",
-        "./lecun.png": "<lecun>",
-        "./bengio.png": "<bengio>",
-        "./man.png":"<man>"
     }
 }
