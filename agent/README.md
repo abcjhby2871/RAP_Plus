@@ -9,6 +9,7 @@ OPENAI_MODEL=doubao-1.5-vision-pro-250328
 ```
 ### Step2 预处理
 TODO:如何提取关键帧与检索定位
+
 首先要构建一个database，根目录下需要有一个database.json的文件
 ```
 database
@@ -30,11 +31,12 @@ database.json中需要有一个键叫concept_dict，格式如下，其中image�
 ```
 预处理后的内容需要组织成如下的文件夹        
 ```
+video3
 ├── config.py
 ├── frame_0.png
 ├── frame_200.png
 ├── frame_250.png
-├── frame_50.png
+└── frame_50.png
 ```
 ```python
 '''
