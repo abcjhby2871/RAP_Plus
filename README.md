@@ -1,4 +1,4 @@
-## RAP-MLLM: Retrieval-Augmented Personalization for Multimodal Large Language Models
+## RAP++: Retrieval-Augmented Personalization for Multimodal Large Language Models -- from image to video
 
 
 
